@@ -1,0 +1,2 @@
+E:/C#/SWD-MO-CollegeAdmissionHelper/android/app/.cxx/Debug/3q5e3a4t/x86_64/CMakeFiles/edit_cache.dir
+E:/C#/SWD-MO-CollegeAdmissionHelper/android/app/.cxx/Debug/3q5e3a4t/x86_64/CMakeFiles/rebuild_cache.dir
