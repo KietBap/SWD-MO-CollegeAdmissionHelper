@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../data/services/api_services.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -7,7 +6,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final ApiService apiService = ApiService();
+  // final ApiService apiService = ApiService();
   List<dynamic> dashboardData = [];
 
   @override
@@ -17,9 +16,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void fetchDashboard() async {
-    final data = await apiService.getDashboardData();
+    // final data = await apiService.getDashboardData();
     setState(() {
-      dashboardData = data;
+      // dashboardData = data;
     });
   }
 
