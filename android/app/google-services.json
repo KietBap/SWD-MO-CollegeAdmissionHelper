@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730631426052",
+    "project_id": "collegeadmissionhelper",
+    "storage_bucket": "collegeadmissionhelper.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730631426052:android:1920d31bd848710d7de551",
+        "android_client_info": {
+          "package_name": "com.example.collegeadmissionhelper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuN5Z_7APCE7wjO0fe31H2kOSvUSJ570s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
