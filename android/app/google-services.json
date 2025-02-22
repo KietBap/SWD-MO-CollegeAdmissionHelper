@@ -12,7 +12,20 @@
           "package_name": "com.example.collegeadmissionhelper"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "730631426052-r96turthtq6j6e4fkg48ksmu82fnlfeo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.collegeadmissionhelper",
+            "certificate_hash": "11e228e82b7a6916c3023f896a7ba1c86caafc39"
+          }
+        },
+        {
+          "client_id": "730631426052-a04afn12vjn07862f2fl04tpfa0jo7cg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAuN5Z_7APCE7wjO0fe31H2kOSvUSJ570s"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "730631426052-a04afn12vjn07862f2fl04tpfa0jo7cg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
