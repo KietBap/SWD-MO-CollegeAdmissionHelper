@@ -32,10 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success) {
-        Navigator.pushReplacementNamed(context, '/mainMenu');
+        Future.microtask(() {
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/mainMenu');
+          }
+        });
       } else {
-        setState(
-            () => errorMessage = "Đăng nhập thất bại! Kiểm tra lại thông tin.");
+        setState(() {
+          errorMessage = "Đăng nhập thất bại! Kiểm tra lại thông tin.";
+          isLoading = false;
+        });
       }
     } catch (e) {
       setState(() => errorMessage = "Có lỗi xảy ra, vui lòng thử lại!");
@@ -49,9 +55,16 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final user = await _googleAuthService.signInWithGoogle();
       if (user != null) {
-        Navigator.pushReplacementNamed(context, '/mainMenu');
+        Future.microtask(() {
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/mainMenu');
+          }
+        });
       } else {
-        setState(() => errorMessage = "Đăng nhập Google thất bại!");
+        setState(() {
+          errorMessage = "Đăng nhập Google thất bại!";
+          isLoading = false;
+        });
       }
     } catch (e) {
       setState(() => errorMessage = "Lỗi khi đăng nhập Google!");
@@ -63,32 +76,33 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("College Admission Helper",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(labelText: 'Mật khẩu'),
-              obscureText: true,
-            ),
-            SizedBox(height: 10),
-            Text(
-              errorMessage,
-              style: TextStyle(color: Colors.red, fontSize: 14),
-            ),
-            SizedBox(height: 20),
-            isLoading
-                ? CircularProgressIndicator()
-                : Column(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("College Admission Helper",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(labelText: 'Email'),
+                  ),
+                  TextField(
+                    controller: passwordController,
+                    decoration: InputDecoration(labelText: 'Mật khẩu'),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.red, fontSize: 14),
+                  ),
+                  SizedBox(height: 20),
+                  Column(
                     children: [
                       ElevatedButton(
                         onPressed: login,
@@ -110,7 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 40),
                       Text("Login with",
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey)),
                       SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: loginWithGoogle,
@@ -127,9 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-          ],
-        ),
-      ),
+                ],
+              ),
+            ),
     );
   }
 }
