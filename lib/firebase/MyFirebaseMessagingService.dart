@@ -62,6 +62,12 @@ class MyFirebaseMessagingService {
       print("🚀 App opened from notification: ${message.data}");
     }
   });
+  
+  _firebaseMessaging.getToken().then((String? token) {
+      if (token != null) {
+        print("📌 FCM Token: $token");
+      }
+    });
 }
 
 
