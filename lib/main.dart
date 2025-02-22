@@ -9,15 +9,14 @@ import 'screens/main_menu_screen.dart';
 import 'screens/user_management_screen.dart';
 import 'screens/dashBoard_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  getFCMToken();
   MyFirebaseMessagingService.initialize();
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -39,11 +38,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-Future<void> getFCMToken() async {
-  String? token = await FirebaseMessaging.instance.getToken();
-  print("FCM Token: $token");
-}
-
-
