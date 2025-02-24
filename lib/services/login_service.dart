@@ -1,8 +1,10 @@
+import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
+  final TokenService _tokenService = TokenService();
   final Dio _dio = Dio(BaseOptions(
     headers: {
       'Accept-Encoding': 'gzip',
@@ -26,10 +28,11 @@ class LoginService {
       if (response.statusCode == 200) {
         String accessToken = response.data["accessToken"];
         String refreshToken = response.data["refreshToken"];
-
+        String sub = _tokenService.checkUserSub(accessToken);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('accessToken', accessToken);
         await prefs.setString('refreshToken', refreshToken);
+        await prefs.setString('sub', sub);
 
         return true;
       } else {
@@ -39,6 +42,25 @@ class LoginService {
       print("Lỗi đăng nhập: $e");
       return false;
     }
+  }
+
+  Future<String?> getSub() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('sub');
+  }
+
+  Future<String> getUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? googleUserName = prefs.getString('userName');
+
+    print('Google UserName là: ${googleUserName}');
+    String? subUserName = await getSub();
+    if (googleUserName != null) {
+      return googleUserName;
+    } else if (subUserName != null) {
+      return subUserName;
+    }
+    return '';
   }
 
   Future<String?> getToken() async {

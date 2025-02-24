@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/google_signIn_service.dart';
 import '../services/login_service.dart';
+import '../services/token_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,6 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final LoginService _loginService = LoginService();
   final GoogleAuthService _googleAuthService = GoogleAuthService();
+  final TokenService _tokenService = TokenService();
 
   String errorMessage = "";
   bool isLoading = false;
@@ -32,11 +35,19 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success) {
-        Future.microtask(() {
-          if (mounted) {
-            Navigator.pushReplacementNamed(context, '/mainMenu');
-          }
-        });
+        String? accessToken = await _loginService.getToken();
+        if (accessToken != null) {
+          String? role = _tokenService.checkUserRole(accessToken);
+          Future.microtask(() {
+            if (role == 'Admin') {
+              Navigator.pushReplacementNamed(context, '/mainMenu');
+            } else {
+              Navigator.pushReplacementNamed(context, '/');
+            }
+          });
+        } else {
+          setState(() => errorMessage = "Không tìm thấy token.");
+        }
       } else {
         setState(() {
           errorMessage = "Đăng nhập thất bại! Kiểm tra lại thông tin.";
