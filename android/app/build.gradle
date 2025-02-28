@@ -63,3 +63,4 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }
+apply plugin: 'com.google.gms.google-services' // Thêm vào cuối file

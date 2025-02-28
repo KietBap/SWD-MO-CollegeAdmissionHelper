@@ -44,23 +44,17 @@ class LoginService {
     }
   }
 
-  Future<String?> getSub() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('sub');
-  }
-
-  Future<String> getUserName() async {
+  Future<String?> getUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? googleUserName = prefs.getString('userName');
+    String? subUserName = prefs.getString('sub');
 
-    print('Google UserName là: ${googleUserName}');
-    String? subUserName = await getSub();
-    if (googleUserName != null) {
+    if (googleUserName != null && googleUserName.isNotEmpty) {
       return googleUserName;
-    } else if (subUserName != null) {
+    } else if (subUserName != null && subUserName.isNotEmpty) {
       return subUserName;
     }
-    return '';
+    return "Người dùng";
   }
 
   Future<String?> getToken() async {
@@ -73,31 +67,6 @@ class LoginService {
     return prefs.getString('refreshToken');
   }
 
-  // Future<bool> refreshAccessToken() async {
-  //   try {
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? refreshToken = prefs.getString('refreshToken');
-
-  //     if (refreshToken == null) return false;
-
-  //     var response = await _dio.post(
-  //       'https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth/auth-account',
-  //       data: {
-  //         "refreshToken": refreshToken,
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       String newAccessToken = response.data["accessToken"];
-  //       await prefs.setString('accessToken', newAccessToken);
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
   Future<void> checkLoginStatus(BuildContext context) async {
     String? token = await getToken();
     if (token != null) {
@@ -111,5 +80,7 @@ class LoginService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('accessToken');
     await prefs.remove('refreshToken');
+    await prefs.remove('sub');
+    await prefs.remove('userName');
   }
 }
