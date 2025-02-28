@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_1.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_2.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_3.dart';
@@ -10,10 +12,19 @@ import 'screens/user_management_screen.dart';
 import 'screens/dashBoard_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+class PostHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   MyFirebaseMessagingService.initialize();
+  HttpOverrides.global = new PostHttpOverrides();
   runApp(MyApp());
 }
 
