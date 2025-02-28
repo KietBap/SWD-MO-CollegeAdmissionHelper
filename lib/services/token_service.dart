@@ -1,4 +1,5 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenService {
   Map<String, dynamic>? decodeToken(String token) {
@@ -55,5 +56,25 @@ class TokenService {
       print("Không thể giải mã token");
       return '';
     }
+  }
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+
+  Future<String?> getRefreshToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('refreshToken');
+  }
+
+  Future<String?> getUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? subUserName = prefs.getString('sub');
+
+    if (subUserName != null && subUserName.isNotEmpty) {
+      return subUserName;
+    }
+    return "Người dùng";
   }
 }

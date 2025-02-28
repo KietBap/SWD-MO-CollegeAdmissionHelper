@@ -8,12 +8,18 @@ class GoogleAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final TokenService _tokenService = TokenService();
-  final Dio _dio = Dio(BaseOptions(
-    headers: {
-      'Accept-Encoding': 'gzip',
-    },
-  ));
-  
+  final Dio _dio = Dio(
+    BaseOptions(
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
+      baseUrl:
+          "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net", 
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 5),
+    ),
+  );
+
   Future<bool> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -22,13 +28,15 @@ class GoogleAuthService {
         return false;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
       String? firebaseToken = await user?.getIdToken();
 
@@ -46,8 +54,9 @@ class GoogleAuthService {
   }
 
   Future<bool> sendTokenToBackend(String firebaseToken) async {
-    const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
-
+    //const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
+    const String backendUrl =
+        "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth/login-google";
     try {
       var response = await _dio.post(
         backendUrl,
@@ -62,8 +71,8 @@ class GoogleAuthService {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('accessToken', accessToken);
         await prefs.setString('refreshToken', refreshToken);
-        await prefs.setString('userName', sub);
-        
+        await prefs.setString('sub', sub);
+
         return true;
       } else {
         print("Lỗi từ backend: ${response.statusCode}");

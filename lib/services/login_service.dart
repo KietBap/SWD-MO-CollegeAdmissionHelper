@@ -1,6 +1,5 @@
 import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
@@ -9,6 +8,10 @@ class LoginService {
     headers: {
       'Accept-Encoding': 'gzip',
     },
+    baseUrl:
+        "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net",
+    connectTimeout: Duration(seconds: 5),
+    receiveTimeout: Duration(seconds: 5),
   ));
   Future<bool> login(String username, String password) async {
     try {
@@ -41,38 +44,6 @@ class LoginService {
     } catch (e) {
       print("Lỗi đăng nhập: $e");
       return false;
-    }
-  }
-
-  Future<String?> getUserName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? googleUserName = prefs.getString('userName');
-    String? subUserName = prefs.getString('sub');
-
-    if (googleUserName != null && googleUserName.isNotEmpty) {
-      return googleUserName;
-    } else if (subUserName != null && subUserName.isNotEmpty) {
-      return subUserName;
-    }
-    return "Người dùng";
-  }
-
-  Future<String?> getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('accessToken');
-  }
-
-  Future<String?> getRefreshToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('refreshToken');
-  }
-
-  Future<void> checkLoginStatus(BuildContext context) async {
-    String? token = await getToken();
-    if (token != null) {
-      Navigator.pushReplacementNamed(context, '/mainMenu');
-    } else {
-      Navigator.pushReplacementNamed(context, '/login');
     }
   }
 

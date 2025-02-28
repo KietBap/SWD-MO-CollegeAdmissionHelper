@@ -1,8 +1,8 @@
-import 'package:collegeadmissionhelper/services/login_service.dart';
+import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:flutter/material.dart';
 
 class MainMenuScreen extends StatelessWidget {
-  final LoginService _loginService = LoginService();
+  final TokenService _tokenService = TokenService();
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class MainMenuScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<String?>(
-          future: _loginService.getUserName(), 
+          future: _tokenService.getUserName(), 
           builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator()); 

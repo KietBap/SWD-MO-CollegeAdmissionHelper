@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success) {
-        String? accessToken = await _loginService.getToken();
+        String? accessToken = await _tokenService.getToken();
         if (accessToken != null) {
           String? role = _tokenService.checkUserRole(accessToken);
           Future.microtask(() {
@@ -63,16 +63,24 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> loginWithGoogle() async {
     setState(() => isLoading = true);
     try {
-      final user = await _googleAuthService.signInWithGoogle();
-      if (user != null) {
-        Future.microtask(() {
-          if (mounted) {
-            Navigator.pushReplacementNamed(context, '/mainMenu');
-          }
-        });
+      final success = await _googleAuthService.signInWithGoogle();
+      if (success) {
+        String? accessToken = await _tokenService.getToken();
+        if (accessToken != null) {
+          String? role = _tokenService.checkUserRole(accessToken);
+          Future.microtask(() {
+            if (role == 'Admin') {
+              Navigator.pushReplacementNamed(context, '/mainMenu');
+            } else {
+              Navigator.pushReplacementNamed(context, '/');
+            }
+          });
+        } else {
+          setState(() => errorMessage = "Không tìm thấy token.");
+        }
       } else {
         setState(() {
-          errorMessage = "Đăng nhập Google thất bại!";
+          errorMessage = "Đăng nhập thất bại!";
           isLoading = false;
         });
       }
