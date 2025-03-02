@@ -6,12 +6,12 @@ class DashBoardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Dashboard", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.deepPurple, // Màu chủ đạo của AppBar
+        backgroundColor: Colors.deepPurple, 
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade200, Colors.purple.shade400], // Hiệu ứng gradient
+            colors: [Colors.blue.shade200, Colors.purple.shade400], 
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

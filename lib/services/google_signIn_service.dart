@@ -14,11 +14,21 @@ class GoogleAuthService {
         'Accept-Encoding': 'gzip',
       },
       baseUrl:
-          "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net", 
-      connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 5),
+          "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth"
     ),
   );
+
+  GoogleAuthService() {
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        String? token = await _tokenService.getToken();
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
+    ));
+  }
 
   Future<bool> signInWithGoogle() async {
     try {
@@ -55,8 +65,7 @@ class GoogleAuthService {
 
   Future<bool> sendTokenToBackend(String firebaseToken) async {
     //const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
-    const String backendUrl =
-        "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth/login-google";
+    const String backendUrl = "/login-google";
     try {
       var response = await _dio.post(
         backendUrl,
@@ -66,13 +75,13 @@ class GoogleAuthService {
 
       if (response.statusCode == 200) {
         String accessToken = response.data["accessToken"];
-        String refreshToken = response.data["refreshToken"];
-        String sub = _tokenService.checkUserSub(accessToken);
+        String? name = _tokenService.checkUserName(accessToken);
+        print(accessToken.runtimeType);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('accessToken', accessToken);
-        await prefs.setString('refreshToken', refreshToken);
-        await prefs.setString('sub', sub);
-
+        await Future.wait([
+          prefs.setString('accessToken', accessToken),
+          prefs.setString('name', name!),
+        ]);
         return true;
       } else {
         print("Lỗi từ backend: ${response.statusCode}");

@@ -25,28 +25,38 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       return;
     }
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      errorMessage = "";
+    });
 
     try {
       bool success = await _loginService.login(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
-
       if (success) {
-        String? accessToken = await _tokenService.getToken();
-        if (accessToken != null) {
-          String? role = _tokenService.checkUserRole(accessToken);
-          Future.microtask(() {
-            if (role == 'Admin') {
-              Navigator.pushReplacementNamed(context, '/mainMenu');
-            } else {
-              Navigator.pushReplacementNamed(context, '/');
-            }
-          });
-        } else {
-          setState(() => errorMessage = "Không tìm thấy token.");
-        }
+        bool isAdmin = await _tokenService.isAdmin();
+        Future.microtask(() {
+          if (isAdmin) {
+            Navigator.pushReplacementNamed(context, '/mainMenu');
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Thông báo"),
+                content: Text("Bạn không có quyền truy cập!"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("OK"),
+                  ),
+                ],
+              ),
+            );
+            setState(() => isLoading = false);
+          }
+        });
       } else {
         setState(() {
           errorMessage = "Đăng nhập thất bại! Kiểm tra lại thông tin.";
@@ -61,23 +71,35 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> loginWithGoogle() async {
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      errorMessage = "";
+    });
+
     try {
       final success = await _googleAuthService.signInWithGoogle();
       if (success) {
-        String? accessToken = await _tokenService.getToken();
-        if (accessToken != null) {
-          String? role = _tokenService.checkUserRole(accessToken);
-          Future.microtask(() {
-            if (role == 'Admin') {
-              Navigator.pushReplacementNamed(context, '/mainMenu');
-            } else {
-              Navigator.pushReplacementNamed(context, '/');
-            }
-          });
-        } else {
-          setState(() => errorMessage = "Không tìm thấy token.");
-        }
+        bool isAdmin = await _tokenService.isAdmin();
+        Future.microtask(() {
+          if (isAdmin) {
+            Navigator.pushReplacementNamed(context, '/mainMenu');
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Thông báo"),
+                content: Text("Bạn không có quyền truy cập!"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("OK"),
+                  ),
+                ],
+              ),
+            );
+            setState(() => isLoading = false);
+          }
+        });
       } else {
         setState(() {
           errorMessage = "Đăng nhập thất bại!";
@@ -125,19 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ElevatedButton(
                         onPressed: login,
                         child: Text('Đăng nhập'),
-                      ),
-                      SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
-                        child: Text("Chưa có tài khoản? Đăng ký ngay"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/forgotPassword');
-                        },
-                        child: Text("Quên mật khẩu?"),
                       ),
                       SizedBox(height: 40),
                       Text("Login with",
