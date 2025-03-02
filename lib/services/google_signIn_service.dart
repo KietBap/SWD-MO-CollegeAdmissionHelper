@@ -8,12 +8,28 @@ class GoogleAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final TokenService _tokenService = TokenService();
-  final Dio _dio = Dio(BaseOptions(
-    headers: {
-      'Accept-Encoding': 'gzip',
-    },
-  ));
-  
+  final Dio _dio = Dio(
+    BaseOptions(
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
+      baseUrl:
+          "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth"
+    ),
+  );
+
+  GoogleAuthService() {
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        String? token = await _tokenService.getToken();
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
+    ));
+  }
+
   Future<bool> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -22,13 +38,15 @@ class GoogleAuthService {
         return false;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
       String? firebaseToken = await user?.getIdToken();
 
@@ -46,8 +64,8 @@ class GoogleAuthService {
   }
 
   Future<bool> sendTokenToBackend(String firebaseToken) async {
-    const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
-
+    //const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
+    const String backendUrl = "/login-google";
     try {
       var response = await _dio.post(
         backendUrl,
@@ -57,13 +75,13 @@ class GoogleAuthService {
 
       if (response.statusCode == 200) {
         String accessToken = response.data["accessToken"];
-        String refreshToken = response.data["refreshToken"];
-        String sub = _tokenService.checkUserSub(accessToken);
+        String? name = _tokenService.checkUserName(accessToken);
+        print(accessToken.runtimeType);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('accessToken', accessToken);
-        await prefs.setString('refreshToken', refreshToken);
-        await prefs.setString('userName', sub);
-        
+        await Future.wait([
+          prefs.setString('accessToken', accessToken),
+          prefs.setString('name', name!),
+        ]);
         return true;
       } else {
         print("Lỗi từ backend: ${response.statusCode}");

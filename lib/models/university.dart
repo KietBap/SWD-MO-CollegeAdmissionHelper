@@ -1,13 +1,37 @@
 class University {
-  String name;
-  String location;
+  final String id;
+  final String name;
+  final String location;
+  final String universityCode;
+  final String email;
+  final String phoneNumber;
+  final String type;
+  final int rankingNational;
+  final int rankingInternational;
 
-  University({required this.name, required this.location});
+  University({
+    required this.id,
+    required this.name,
+    required this.location,
+    required this.universityCode,
+    required this.email,
+    required this.phoneNumber,
+    required this.type,
+    required this.rankingNational,
+    required this.rankingInternational,
+  });
 
   factory University.fromJson(Map<String, dynamic> json) {
     return University(
-      name: json['name'],
-      location: json['location'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      location: json['location'] ?? '',
+      universityCode: json['universityCode'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      type: json['type'] ?? '',
+      rankingNational: json['rankingNational'] ?? 0,
+      rankingInternational: json['rankingInternational'] ?? 0,
     );
   }
 }
