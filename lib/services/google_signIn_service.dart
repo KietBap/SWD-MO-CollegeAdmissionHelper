@@ -10,12 +10,11 @@ class GoogleAuthService {
   final TokenService _tokenService = TokenService();
   final Dio _dio = Dio(
     BaseOptions(
-      headers: {
-        'Accept-Encoding': 'gzip',
-      },
-      baseUrl:
-          "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth"
-    ),
+        headers: {
+          'Accept-Encoding': 'gzip',
+        },
+        baseUrl:
+            "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/auth"),
   );
 
   GoogleAuthService() {
@@ -32,6 +31,7 @@ class GoogleAuthService {
 
   Future<bool> signInWithGoogle() async {
     try {
+      await GoogleSignIn().signOut();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         print("Đăng nhập bị hủy bởi người dùng");
@@ -75,12 +75,14 @@ class GoogleAuthService {
 
       if (response.statusCode == 200) {
         String accessToken = response.data["accessToken"];
+        String? userId = _tokenService.checkUserId(accessToken);
         String? name = _tokenService.checkUserName(accessToken);
-        print(accessToken.runtimeType);
+        print('USer Id là ${userId}');
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await Future.wait([
           prefs.setString('accessToken', accessToken),
           prefs.setString('name', name!),
+          prefs.setString('userId', userId!),
         ]);
         return true;
       } else {
@@ -94,6 +96,11 @@ class GoogleAuthService {
   }
 
   Future<void> signOut() async {
+    try {
+      await _googleSignIn.disconnect();
+    } catch (e) {
+      print("Lỗi khi disconnect Google: $e");
+    }
     await _googleSignIn.signOut();
     await _auth.signOut();
   }

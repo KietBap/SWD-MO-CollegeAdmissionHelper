@@ -8,7 +8,6 @@ class TokenService {
           token,
           SecretKey(
               'HT4bb6d1dfbafb64a681139d1586b6f1160d18159afd57c8c79136d7490630407c'));
-      print(jwt.payload);
       return jwt.payload;
     } catch (e) {
       print("Lỗi khi giải mã token: $e");
@@ -34,9 +33,19 @@ class TokenService {
     return payload?['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
   }
 
+  String? checkUserId(String accessToken) {
+    final payload = decodeToken(accessToken);
+    return payload?['userId'];
+  }
+
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('accessToken');
+  }
+
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId');
   }
 
   Future<String?> getRefreshToken() async {
