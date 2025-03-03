@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:collegeadmissionhelper/models/university.dart';
 import 'package:collegeadmissionhelper/services/university_service.dart';
-
 import 'university_detail_screen.dart';
 
 class UniversityListScreen extends StatefulWidget {

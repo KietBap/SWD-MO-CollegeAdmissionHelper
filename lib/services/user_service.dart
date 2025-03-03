@@ -54,4 +54,23 @@ class UserService {
       throw Exception('Lỗi API: $e');
     }
   }
+
+  Future<User> getUserById(String userId) async {
+    try {
+      final response = await _dio.get(
+        '/id',
+        queryParameters: {'id': userId},
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = response.data;
+        final Map<String, dynamic> userData =
+            data.containsKey('message') ? data['message'] : data;
+        return User.fromJson(userData);
+      } else {
+        throw Exception('Lỗi tải thông tin người dùng');
+      }
+    } catch (e) {
+      throw Exception('Lỗi API: $e');
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:collegeadmissionhelper/models/user.dart';
 import 'package:collegeadmissionhelper/services/user_service.dart';
+import 'user_detail_screen.dart';
 
 class UserManagementScreen extends StatefulWidget {
   @override
@@ -64,7 +65,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         children: [
           Card(
             margin: EdgeInsets.all(10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 4,
             child: Padding(
               padding: EdgeInsets.all(12),
@@ -75,7 +77,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     decoration: InputDecoration(
                       labelText: "Email",
                       prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -84,7 +87,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     decoration: InputDecoration(
                       labelText: "Số điện thoại",
                       prefixIcon: Icon(Icons.phone),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                     keyboardType: TextInputType.phone,
                   ),
@@ -100,7 +104,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -113,7 +118,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -156,10 +162,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Text(user.email),
-                              trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                              trailing: Icon(Icons.arrow_forward_ios,
+                                  color: Colors.grey),
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Xem chi tiết ${user.name}")),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserDetailScreen(user: user),
+                                  ),
                                 );
                               },
                             ),

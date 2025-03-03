@@ -1,13 +1,25 @@
 import 'package:collegeadmissionhelper/services/token_service.dart';
+import 'package:collegeadmissionhelper/services/user_service.dart';
 import 'package:flutter/material.dart';
+import '../models/user.dart';
+import 'profile_screen.dart';
 
 class MainMenuScreen extends StatelessWidget {
   final TokenService _tokenService = TokenService();
+  final UserService _userService = UserService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Menu người dùng")),
+      appBar: AppBar(
+        title: Text("Menu người dùng"),
+        actions: [
+          IconButton(
+             icon: Icon(Icons.account_circle, size: 32),
+            onPressed: () => _navigateToProfile(context),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<String?>(
@@ -27,8 +39,7 @@ class MainMenuScreen extends StatelessWidget {
                   Text("Xin chào, $userName", style: TextStyle(fontSize: 20)),
                   SizedBox(height: 20),
                   FutureBuilder<String?>(
-                    future:
-                        _tokenService.getUserRole(), 
+                    future: _tokenService.getUserRole(),
                     builder: (context, roleSnapshot) {
                       if (roleSnapshot.connectionState ==
                           ConnectionState.waiting) {
@@ -103,5 +114,29 @@ class MainMenuScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _navigateToProfile(BuildContext context) async {
+    String? userId = await _tokenService.getUserId();
+
+    if (userId != null) {
+      try {
+        User user = await _userService.getUserById(userId);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(user: user),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi tải thông tin người dùng')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không tìm thấy UserId')),
+      );
+    }
   }
 }

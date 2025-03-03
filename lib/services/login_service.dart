@@ -30,11 +30,13 @@ class LoginService {
       );
 
       if (response.statusCode == 200) {
-        String accessToken = response.data["accessToken"].toString().trim();
+        String accessToken = response.data["accessToken"];
+        String? userId = _tokenService.checkUserId(accessToken);
         String? name = _tokenService.checkUserName(accessToken);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('accessToken', accessToken);
         await prefs.setString('name', name!);
+        await prefs.setString('userId', userId!);
 
         return true;
       } else {
@@ -48,7 +50,6 @@ class LoginService {
 
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('name');
-    await prefs.remove('accessToken');
+    await prefs.clear();
   }
 }

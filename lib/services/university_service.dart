@@ -63,9 +63,6 @@ class UniversityService {
         '/id',
         queryParameters: {'id': universityId},
       );
-
-      print("Raw Response Data: ${response.data}");
-
       if (response.statusCode == 200) {
         final data = response.data['message'];
         if (data == null)
