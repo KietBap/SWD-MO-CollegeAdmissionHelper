@@ -15,7 +15,7 @@ class MainMenuScreen extends StatelessWidget {
         title: Text("Menu người dùng"),
         actions: [
           IconButton(
-             icon: Icon(Icons.account_circle, size: 32),
+            icon: Icon(Icons.account_circle, size: 32),
             onPressed: () => _navigateToProfile(context),
           ),
         ],
@@ -63,6 +63,10 @@ class MainMenuScreen extends StatelessWidget {
                               '/dashBoard', isAdmin),
                           _buildCard("Danh sách trường Đại học", Icons.school,
                               context, '/universities', true),
+                          _buildCard("Chat với AI", Icons.smart_toy, context,
+                              '/chatboxAI', true),
+                          _buildCard("Danh sách chuyên ngành", Icons.book, context,
+                              '/major', true),
                         ],
                       );
                     },

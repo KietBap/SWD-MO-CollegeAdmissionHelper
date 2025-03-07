@@ -29,15 +29,40 @@ class MajorService {
     ));
   }
 
-  Future<List<Major>> getMajors(String universityId,
+  Future<List<Major>> getMajorsByUniversity(String universityId,
       {int pageNumber = 1, int pageSize = 99}) async {
     try {
       final response = await _dio.get(
-        "/all-by-universityid",
+        "/$universityId",
         queryParameters: {
-          "uniId": universityId,
           "pageNumber": pageNumber,
           "pageSize": pageSize,
+        },
+      );
+      
+
+      if (response.statusCode == 200) {
+        PaginatedResponse<Major> paginatedResponse =
+            PaginatedResponse<Major>.fromJson(
+                response.data, (json) => Major.fromJson(json));
+                print('sdsdsdsd ${paginatedResponse.items}');
+        return paginatedResponse.items;
+      } else {
+        throw Exception('Failed to load');
+      }
+    } catch (e) {
+      throw Exception('Error fetching: $e');
+    }
+  }
+  Future<List<Major>> getAllMajors(String? majorName,
+      {int pageNumber = 1, int pageSize = 99}) async {
+    try {
+      final response = await _dio.get(
+        "",
+        queryParameters: {
+          "pageNumber": pageNumber,
+          "pageSize": pageSize,
+          if (majorName != null) "majorName" : majorName
         },
       );
 

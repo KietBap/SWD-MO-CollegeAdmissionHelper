@@ -1,74 +1,94 @@
 import 'package:flutter/material.dart';
 
-class DashBoardScreen extends StatelessWidget {
+import '../services/dashboard_service.dart';
+
+class DashBoardScreen extends StatefulWidget {
+  @override
+  _DashBoardScreenState createState() => _DashBoardScreenState();
+}
+
+class _DashBoardScreenState extends State<DashBoardScreen> {
+  final DashboardService _dashboardService = DashboardService();
+  String totalUsers = "...";
+  String totalUniversities = "...";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDashboardData();
+  }
+
+  Future<void> fetchDashboardData() async {
+    String users = await _dashboardService.getTotalUser();
+    String universities = await _dashboardService.getTotalUniversities();
+    setState(() {
+      totalUsers = users;
+      totalUniversities = universities;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dashboard", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.deepPurple, 
+        title: Text(
+          "Dashboard",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black, // Đổi màu chữ về đen
+        elevation: 0, // Bỏ bóng
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade200, Colors.purple.shade400], 
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Chọn biểu đồ bạn muốn xem",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                _buildCard(context, "Biểu đồ 1: Ngành học", Icons.school, "/chart1"),
-                _buildCard(context, "Biểu đồ 2: Tư vấn AI", Icons.smart_toy, "/chart2"),
-                _buildCard(context, "Biểu đồ 3: Lượt truy cập", Icons.visibility, "/chart3"),
-              ],
-            ),
+        color: Colors.white, // Đổi nền trắng
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              _buildStatCard(context, "Tổng số người dùng", totalUsers,
+                  Icons.people, "/chart1"),
+              SizedBox(height: 10),
+              _buildStatCard(context, "Tổng số trường đại học",
+                  totalUniversities, Icons.school, "/chart2"),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCard(BuildContext context, String title, IconData icon, String route) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: InkWell(
-        onTap: () => Navigator.pushNamed(context, route),
-        child: Card(
-          elevation: 5, // Độ nổi của card
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          child: Container(
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              gradient: LinearGradient(
-                colors: [Colors.purple.shade300, Colors.blue.shade300], // Gradient màu sắc
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 40, color: Colors.white), // Icon
-                SizedBox(width: 15),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
+  Widget _buildStatCard(BuildContext context, String title, String value,
+      IconData icon, String route) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, route); // Chuyển đến màn hình tương ứng
+      },
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Row(
+            children: [
+              Icon(icon, size: 40, color: Colors.black),
+              SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5),
+                    Text(value,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54)),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

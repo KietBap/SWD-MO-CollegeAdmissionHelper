@@ -34,7 +34,7 @@ class UserService {
       int pageSize = 100}) async {
     try {
       final response = await _dio.get(
-        '/all',
+        '',
         queryParameters: {
           if (email != null) 'email': email,
           if (phoneNumber != null) 'phoneNumber': phoneNumber,
@@ -57,10 +57,7 @@ class UserService {
 
   Future<User> getUserById(String userId) async {
     try {
-      final response = await _dio.get(
-        '/id',
-        queryParameters: {'id': userId},
-      );
+      final response = await _dio.get('/$userId');
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = response.data;
         final Map<String, dynamic> userData =

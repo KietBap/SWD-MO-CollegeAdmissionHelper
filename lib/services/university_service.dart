@@ -35,7 +35,7 @@ class UniversityService {
       int pageSize = 100}) async {
     try {
       final response = await _dio.get(
-        '/all',
+        '',
         queryParameters: {
           if (uniCode != null) 'uniCode': uniCode,
           if (type != null) 'type': type,
@@ -59,12 +59,10 @@ class UniversityService {
 
   Future<University> getUniversityById(String universityId) async {
     try {
-      final response = await _dio.get(
-        '/id',
-        queryParameters: {'id': universityId},
-      );
+      final response = await _dio.get("/$universityId");
       if (response.statusCode == 200) {
         final data = response.data['message'];
+        print('sdsdsdsd ${data}');
         if (data == null)
           throw Exception("Không tìm thấy dữ liệu trường đại học");
         return University.fromJson(data);
