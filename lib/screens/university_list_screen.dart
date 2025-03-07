@@ -12,10 +12,12 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
   final UniversityService _universityService = UniversityService();
   List<University> universities = [];
   bool isLoading = false;
+  bool isAscending = true;
+  String? sortBy = "name";
 
   final TextEditingController _uniCodeController = TextEditingController();
-  final TextEditingController _typeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  String? _selectedType;
 
   @override
   void initState() {
@@ -23,7 +25,8 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
     fetchUniversities();
   }
 
-  Future<void> fetchUniversities({String? uniCode, String? type, String? location}) async {
+  Future<void> fetchUniversities(
+      {String? uniCode, String? type, String? location}) async {
     setState(() => isLoading = true);
     try {
       final response = await _universityService.getAllUniversities(
@@ -31,8 +34,20 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
         type: type,
         location: location,
       );
+      List<University> listUniversities = response.items;
+      if (sortBy == "name") {
+        listUniversities.sort(
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      } else if (sortBy == "code") {
+        listUniversities.sort(
+            (a, b) => a.email.toLowerCase().compareTo(b.email.toLowerCase()));
+      }
+
+      if (!isAscending) {
+        listUniversities = listUniversities.reversed.toList();
+      }
       setState(() {
-        universities = response.items;
+        universities = listUniversities;
         isLoading = false;
       });
     } catch (e) {
@@ -45,28 +60,89 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
 
   void applyFilter() {
     fetchUniversities(
-      uniCode: _uniCodeController.text.isNotEmpty ? _uniCodeController.text : null,
-      type: _typeController.text.isNotEmpty ? _typeController.text : null,
-      location: _locationController.text.isNotEmpty ? _locationController.text : null,
+      uniCode:
+          _uniCodeController.text.isNotEmpty ? _uniCodeController.text : null,
+      type: _selectedType,
+      location:
+          _locationController.text.isNotEmpty ? _locationController.text : null,
     );
   }
 
   void clearFilters() {
     _uniCodeController.clear();
-    _typeController.clear();
     _locationController.clear();
+    setState(() {
+      sortBy = null;
+      isAscending = true;
+      isLoading = false;
+    });
     fetchUniversities();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Danh sách các trường đại học")),
+      appBar: AppBar(
+        title: Text("Danh sách các trường đại học"),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.sort), // Nút chọn tiêu chí sắp xếp
+            onSelected: (String value) {
+              setState(() {
+                sortBy = value;
+                fetchUniversities();
+              });
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                value: "name",
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: sortBy == "name"
+                          ? Icon(Icons.check, color: Colors.blue)
+                          : null,
+                    ),
+                    SizedBox(width: 8),
+                    Text("Sắp xếp theo tên trường"),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: "code",
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: sortBy == "code"
+                          ? Icon(Icons.check, color: Colors.blue)
+                          : null,
+                    ),
+                    SizedBox(width: 8),
+                    Text("Sắp xếp theo mã trường"),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          IconButton(
+            icon: Icon(isAscending ? Icons.arrow_upward : Icons.arrow_downward),
+            onPressed: () {
+              setState(() {
+                isAscending = !isAscending;
+                fetchUniversities();
+              });
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Card(
             margin: EdgeInsets.all(10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 4,
             child: Padding(
               padding: EdgeInsets.all(12),
@@ -77,16 +153,29 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                     decoration: InputDecoration(
                       labelText: "Mã trường",
                       prefixIcon: Icon(Icons.code),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                   SizedBox(height: 10),
-                  TextField(
-                    controller: _typeController,
+                  DropdownButtonFormField<String>(
+                    value: _selectedType,
+                    items: ["State", "Private", "International"]
+                        .map((type) => DropdownMenuItem(
+                              value: type,
+                              child: Text(type),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedType = value;
+                      });
+                    },
                     decoration: InputDecoration(
-                      labelText: "Loại hình",
+                      labelText: _selectedType == null ? "Loại hình" : "",
                       prefixIcon: Icon(Icons.category),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -95,7 +184,8 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                     decoration: InputDecoration(
                       labelText: "Địa điểm",
                       prefixIcon: Icon(Icons.location_on),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -110,7 +200,8 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -123,7 +214,8 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -144,21 +236,40 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           var uni = universities[index];
                           return Card(
                             elevation: 3,
-                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 10),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
-                              leading: Icon(Icons.school, color: Colors.blueAccent),
-                              title: Text(
-                                uni.name,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              leading: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    uni.image,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(Icons.school,
+                                          color: Colors.blueAccent, size: 40);
+                                    },
+                                  ),
+                                ),
                               ),
-                              subtitle: Text("Mã trường: ${uni.universityCode} - Địa điểm: ${uni.location}"),
-                              trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                              subtitle: Text(
+                                  "Mã trường: ${uni.universityCode} - Địa điểm: ${uni.location}"),
+                              trailing: Icon(Icons.arrow_forward_ios,
+                                  color: Colors.grey),
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UniversityDetailScreen(universityId: uni.id),
+                                    builder: (context) =>
+                                        UniversityDetailScreen(
+                                            universityId: uni.id),
                                   ),
                                 );
                               },

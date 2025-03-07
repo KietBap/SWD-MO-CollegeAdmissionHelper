@@ -1,48 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:collegeadmissionhelper/models/user.dart';
-import 'package:collegeadmissionhelper/services/user_service.dart';
-import 'user_detail_screen.dart';
+import 'package:collegeadmissionhelper/models/major.dart';
+import 'package:collegeadmissionhelper/services/major_service.dart';
 
-class UserManagementScreen extends StatefulWidget {
+class MajorListScreen extends StatefulWidget {
   @override
-  _UserManagementScreenState createState() => _UserManagementScreenState();
+  _MajorListScreenState createState() => _MajorListScreenState();
 }
 
-class _UserManagementScreenState extends State<UserManagementScreen> {
-  final UserService _userService = UserService();
-  List<User> users = [];
-  bool isLoading = true;
+class _MajorListScreenState extends State<MajorListScreen> {
+  final MajorService _majorService = MajorService();
+  List<Major> majors = [];
+  bool isLoading = false;
   bool isAscending = true;
   String? sortBy = "name";
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _majorNameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    fetchUsers();
+    fetchMajors();
   }
 
-  Future<void> fetchUsers({String? email, String? phoneNumber}) async {
+  Future<void> fetchMajors({String? majorName}) async {
     setState(() => isLoading = true);
     try {
-      var response = await _userService.getAllUser(
-        email: email,
-        phoneNumber: phoneNumber,
-        page: 1,
-        pageSize: 10,
-      );
-      List<User> listUsers = response.items;
+      final response = await _majorService.getAllMajors(majorName);
+      List<Major> listMajors = response;
       if (sortBy == "name") {
-        listUsers.sort(
+        listMajors.sort(
             (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-      } else if (sortBy == "email") {
-        listUsers.sort(
-            (a, b) => a.email.toLowerCase().compareTo(b.email.toLowerCase()));
+      }
+
+      if (!isAscending) {
+        listMajors = listMajors.reversed.toList();
       }
       setState(() {
-        users = response.items;
+        majors = listMajors;
         isLoading = false;
       });
     } catch (e) {
@@ -54,31 +48,34 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   }
 
   void applyFilter() {
-    fetchUsers(
-      email: _emailController.text.isNotEmpty ? _emailController.text : null,
-      phoneNumber:
-          _phoneController.text.isNotEmpty ? _phoneController.text : null,
+    fetchMajors(
+      majorName:
+          _majorNameController.text.isNotEmpty ? _majorNameController.text : null,
     );
   }
 
   void clearFilters() {
-    _emailController.clear();
-    _phoneController.clear();
-    fetchUsers();
+    _majorNameController.clear();
+    setState(() {
+      sortBy = null;
+      isAscending = true;
+      isLoading = false;
+    });
+    fetchMajors();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Quản lý người dùng"),
+        title: Text("Danh sách ngành học"),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort), // Nút chọn tiêu chí sắp xếp
+            icon: Icon(Icons.sort),
             onSelected: (String value) {
               setState(() {
                 sortBy = value;
-                fetchUsers();
+                fetchMajors();
               });
             },
             itemBuilder: (BuildContext context) => [
@@ -93,22 +90,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           : null,
                     ),
                     SizedBox(width: 8),
-                    Text("Sắp xếp theo Tên"),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: "email",
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 24,
-                      child: sortBy == "email"
-                          ? Icon(Icons.check, color: Colors.blue)
-                          : null,
-                    ),
-                    SizedBox(width: 8),
-                    Text("Sắp xếp theo Tên"),
+                    Text("Sắp xếp theo tên ngành"),
                   ],
                 ),
               ),
@@ -119,7 +101,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             onPressed: () {
               setState(() {
                 isAscending = !isAscending;
-                fetchUsers();
+                fetchMajors();
               });
             },
           ),
@@ -137,24 +119,13 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               child: Column(
                 children: [
                   TextField(
-                    controller: _emailController,
+                    controller: _majorNameController,
                     decoration: InputDecoration(
-                      labelText: "Email",
-                      prefixIcon: Icon(Icons.email),
+                      labelText: "Tên ngành",
+                      prefixIcon: Icon(Icons.book),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: _phoneController,
-                    decoration: InputDecoration(
-                      labelText: "Số điện thoại",
-                      prefixIcon: Icon(Icons.phone),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                    ),
-                    keyboardType: TextInputType.phone,
                   ),
                   SizedBox(height: 10),
                   Row(
@@ -196,47 +167,26 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           Expanded(
             child: isLoading
                 ? Center(child: CircularProgressIndicator())
-                : users.isEmpty
-                    ? Center(child: Text("Không có người dùng nào"))
+                : majors.isEmpty
+                    ? Center(child: Text("Không có ngành nào"))
                     : ListView.builder(
-                        itemCount: users.length,
+                        itemCount: majors.length,
                         itemBuilder: (context, index) {
-                          var user = users[index];
+                          var major = majors[index];
                           return Card(
                             elevation: 3,
-                            margin: const EdgeInsets.symmetric(
+                            margin: EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 10),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.blueAccent,
-                                backgroundImage: (user.userImage != null &&
-                                        user.userImage!.isNotEmpty)
-                                    ? NetworkImage(user.userImage!)
-                                    : null,
-                                child: (user.userImage == null ||
-                                        user.userImage!.isEmpty)
-                                    ? Icon(Icons.person, color: Colors.white)
-                                    : null,
-                              ),
+                              leading:
+                                  Icon(Icons.book, color: Colors.blueAccent),
                               title: Text(
-                                user.name,
+                                major.name,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              subtitle: Text(user.email),
-                              trailing: Icon(Icons.arrow_forward_ios,
-                                  color: Colors.grey),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        UserDetailScreen(user: user),
-                                  ),
-                                );
-                              },
+                              subtitle: Text("Kỹ năng liên quan: ${major.relatedSkills}"),
                             ),
                           );
                         },

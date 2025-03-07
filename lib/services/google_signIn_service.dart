@@ -64,8 +64,8 @@ class GoogleAuthService {
   }
 
   Future<bool> sendTokenToBackend(String firebaseToken) async {
-    //const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
-    const String backendUrl = "/login-google";
+  //const String backendUrl = "https://10.0.2.2:7286/api/auth/login-google";
+   const String backendUrl = "/login-google";
     try {
       var response = await _dio.post(
         backendUrl,

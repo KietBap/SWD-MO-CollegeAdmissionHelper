@@ -21,9 +21,20 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
   @override
   void initState() {
     super.initState();
+
+    Future universityFuture =
+        _universityService.getUniversityById(widget.universityId);
+    Future majorsFuture = _majorService.getMajorsByUniversity(widget.universityId);
+
     _futureData = Future.wait([
-      _universityService.getUniversityById(widget.universityId),
-      _majorService.getMajors(widget.universityId)
+      universityFuture.catchError((e) {
+        print("Error fetching university: $e");
+        return null; // Trả về null nếu lỗi
+      }),
+      majorsFuture.catchError((e) {
+        print("Error fetching majors: $e");
+        return []; // Trả về danh sách rỗng nếu lỗi
+      }),
     ]);
   }
 
@@ -35,7 +46,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
         future: _futureData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator()); // Loading chung
+            return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text("Lỗi tải dữ liệu! Vui lòng thử lại."));
           } else if (!snapshot.hasData || snapshot.data!.length < 2) {
@@ -46,69 +57,109 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
           final List<Major> majors = snapshot.data![1];
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  uni.name,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
-                ),
-                SizedBox(height: 10),
-                Text("Mã trường: ${uni.universityCode}", style: TextStyle(fontSize: 16)),
-                Text("Địa điểm: ${uni.location}", style: TextStyle(fontSize: 16)),
-                Text("Email: ${uni.email}", style: TextStyle(fontSize: 16)),
-                Text("Số điện thoại: ${uni.phoneNumber}", style: TextStyle(fontSize: 16)),
-                Text("Loại: ${uni.type}", style: TextStyle(fontSize: 16)),
-                Text("Xếp hạng quốc gia: ${uni.rankingNational}", style: TextStyle(fontSize: 16)),
-                Text("Xếp hạng quốc tế: ${uni.rankingInternational}", style: TextStyle(fontSize: 16)),
-                SizedBox(height: 20),
-                Divider(thickness: 2),
-                SizedBox(height: 10),
-                Text("Chuyên ngành", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-
-                if (majors.isEmpty)
-                  Center(child: Text("Không có chuyên ngành nào."))
-                else
-                  Column(
-                    children: majors.map((major) {
-                      return Card(
-                        margin: EdgeInsets.symmetric(vertical: 8),
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.school, color: Colors.blueAccent, size: 30),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      major.name,
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                uni.image.isNotEmpty
+                    ? Image.network(
+                        uni.image,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      )
+                    : SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        uni.name,
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent),
+                      ),
+                      SizedBox(height: 10),
+                      Text("Mã trường: ${uni.universityCode}",
+                          style: TextStyle(fontSize: 16)),
+                      Text("Địa điểm: ${uni.location}",
+                          style: TextStyle(fontSize: 16)),
+                      Text("Email: ${uni.email}",
+                          style: TextStyle(fontSize: 16)),
+                      Text("Số điện thoại: ${uni.phoneNumber}",
+                          style: TextStyle(fontSize: 16)),
+                      Text("Loại: ${uni.type}", style: TextStyle(fontSize: 16)),
+                      Text("Xếp hạng quốc gia: ${uni.rankingNational}",
+                          style: TextStyle(fontSize: 16)),
+                      Text("Xếp hạng quốc tế: ${uni.rankingInternational}",
+                          style: TextStyle(fontSize: 16)),
+                      SizedBox(height: 20),
+                      Divider(thickness: 2),
+                      SizedBox(height: 10),
+                      Text("Chuyên ngành",
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold)),
+                      if (majors.isEmpty)
+                        Center(child: Text("Không có chuyên ngành nào."))
+                      else
+                        Column(
+                          children: majors.map((major) {
+                            return Card(
+                              margin: EdgeInsets.symmetric(vertical: 8),
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.school,
+                                            color: Colors.blueAccent, size: 30),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            major.name,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                    if (major.description != null &&
+                                        major.description!.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 8),
+                                        child: Text(
+                                            "Mô tả: ${major.description}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[700])),
+                                      ),
+                                    if (major.relatedSkills != null &&
+                                        major.relatedSkills!.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 8),
+                                        child: Text(
+                                            "Kỹ năng liên quan: ${major.relatedSkills}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.blueGrey)),
+                                      ),
+                                  ],
+                                ),
                               ),
-                              if (major.description != null && major.description!.isNotEmpty)
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: Text("Mô tả: ${major.description}", style: TextStyle(fontSize: 14, color: Colors.grey[700])),
-                                ),
-                              if (major.relatedSkills != null && major.relatedSkills!.isNotEmpty)
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: Text("Kỹ năng liên quan: ${major.relatedSkills}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.blueGrey)),
-                                ),
-                            ],
-                          ),
+                            );
+                          }).toList(),
                         ),
-                      );
-                    }).toList(),
+                    ],
                   ),
+                ),
               ],
             ),
           );

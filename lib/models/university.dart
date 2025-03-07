@@ -8,6 +8,7 @@ class University {
   final String type;
   final int rankingNational;
   final int rankingInternational;
+  final String image;
 
   University({
     required this.id,
@@ -19,6 +20,7 @@ class University {
     required this.type,
     required this.rankingNational,
     required this.rankingInternational,
+    required this.image,
   });
 
   factory University.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class University {
       type: json['type'] ?? '',
       rankingNational: json['rankingNational'] ?? 0,
       rankingInternational: json['rankingInternational'] ?? 0,
+      image: json['image'] ?? '',
     );
   }
 }
