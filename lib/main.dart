@@ -4,7 +4,6 @@ import 'package:collegeadmissionhelper/screens/chart/chart_screen_1.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_2.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_3.dart';
 import 'package:collegeadmissionhelper/screens/university_list_screen.dart';
-import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:flutter/material.dart';
 import 'firebase/MyFirebaseMessagingService.dart';
 import 'screens/chatbox_ai_screen.dart';
@@ -23,8 +22,6 @@ class PostHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-
-final TokenService _tokenService = TokenService();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
