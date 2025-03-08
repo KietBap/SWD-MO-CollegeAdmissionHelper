@@ -35,12 +35,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           "Dashboard",
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black, // Đổi màu chữ về đen
         elevation: 0, // Bỏ bóng
       ),
-      body: Container(
-        color: Colors.white, // Đổi nền trắng
+      body: Container(// Đổi nền trắng
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

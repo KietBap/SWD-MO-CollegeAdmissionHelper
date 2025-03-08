@@ -1,3 +1,4 @@
+import 'package:collegeadmissionhelper/models/major_request.dart';
 import 'package:dio/dio.dart';
 import 'package:collegeadmissionhelper/models/major.dart';
 import '../models/paginated_response.dart';
@@ -12,8 +13,6 @@ class MajorService {
       headers: {
         'Accept': 'application/json',
       },
-      connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 5),
     ),
   );
 
@@ -33,19 +32,18 @@ class MajorService {
       {int pageNumber = 1, int pageSize = 99}) async {
     try {
       final response = await _dio.get(
-        "/$universityId",
+        "/by-university/$universityId",
         queryParameters: {
           "pageNumber": pageNumber,
           "pageSize": pageSize,
         },
       );
-      
 
       if (response.statusCode == 200) {
         PaginatedResponse<Major> paginatedResponse =
             PaginatedResponse<Major>.fromJson(
                 response.data, (json) => Major.fromJson(json));
-                print('sdsdsdsd ${paginatedResponse.items}');
+        print('sdsdsdsd ${paginatedResponse.items}');
         return paginatedResponse.items;
       } else {
         throw Exception('Failed to load');
@@ -54,6 +52,7 @@ class MajorService {
       throw Exception('Error fetching: $e');
     }
   }
+
   Future<List<Major>> getAllMajors(String? majorName,
       {int pageNumber = 1, int pageSize = 99}) async {
     try {
@@ -62,7 +61,7 @@ class MajorService {
         queryParameters: {
           "pageNumber": pageNumber,
           "pageSize": pageSize,
-          if (majorName != null) "majorName" : majorName
+          if (majorName != null) "majorName": majorName
         },
       );
 
@@ -71,6 +70,66 @@ class MajorService {
             PaginatedResponse<Major>.fromJson(
                 response.data, (json) => Major.fromJson(json));
         return paginatedResponse.items;
+      } else {
+        throw Exception('Failed to load');
+      }
+    } catch (e) {
+      throw Exception('Error fetching: $e');
+    }
+  }
+
+  Future<void> createMajor(MajorRequest request) async {
+    try {
+      final response = await _dio.post(
+        "",
+        data: {
+          "name": request.name,
+          "description": request.description,
+          "relatedSkills": request.relatedSkills,
+        },
+      );
+      if (response.statusCode == 200) {
+        print("Ngành học đã được tạo: ${response.data}");
+      } else {
+        throw Exception('Failed to load');
+      }
+    } catch (e) {
+      throw Exception('Error fetching: $e');
+    }
+  }
+
+  Future<void> updateMajor(String id, MajorRequest updateRequest) async {
+    try {
+      final data = updateRequest.toUpdateJson();
+      if (data.isEmpty) {
+        print("Không có dữ liệu cần cập nhật!");
+        return;
+      }
+      print("Dữ liệu gửi lên: $data");
+      final response = await _dio.patch(
+        '/$id',
+        data: data,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      print("Cập nhật thành công: ${response.data}");
+    } catch (e) {
+      print("Lỗi khi cập nhật ngành học: $e");
+    }
+  }
+
+  Future<void> deleteMajor(String MajorId) async {
+    try {
+      final response = await _dio.delete(
+        "/$MajorId",
+        queryParameters: {"id ": MajorId},
+      );
+      if (response.statusCode == 200) {
+        print("Ngành học đã được cập nhật: ${response.data}");
       } else {
         throw Exception('Failed to load');
       }

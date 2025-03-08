@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import '../services/chat_ai_service.dart';
-import '../state/typing_indicator.dart';
+import '../widgets/typing_indicator.dart';
 
 class ChatBoxAiScreen extends StatefulWidget {
   @override

@@ -11,8 +11,6 @@ class UniversityService {
     },
     baseUrl:
         "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/university",
-    connectTimeout: Duration(seconds: 5),
-    receiveTimeout: Duration(seconds: 5),
   ));
 
   UniversityService() {
