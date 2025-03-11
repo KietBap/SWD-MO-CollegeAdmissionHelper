@@ -259,10 +259,25 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                                   ),
                                 ),
                               ),
-                              subtitle: Text(
-                                  "Mã trường: ${uni.universityCode} - Địa điểm: ${uni.location}"),
-                              trailing: Icon(Icons.arrow_forward_ios,
-                                  color: Colors.grey),
+                              title: Text(
+                                "${uni.name}",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          "Mã trường: ${uni.universityCode}\n",
+                                    ),
+                                    TextSpan(
+                                      text: "Địa điểm: ${uni.location}",
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
