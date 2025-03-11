@@ -8,8 +8,6 @@ import '../widgets/snackbar_utils.dart';
 import '../widgets/widget_utils.dart';
 
 class MajorListScreen extends StatefulWidget {
-  const MajorListScreen({Key? key}) : super(key: key);
-
   @override
   _MajorListScreenState createState() => _MajorListScreenState();
 }
@@ -129,8 +127,9 @@ class _MajorListScreenState extends State<MajorListScreen> {
 
   Future<void> createMajor() async {
     if (_majorNameController.text.isEmpty) {
-      if (mounted)
+      if (mounted) {
         showSnackBar(context, "Vui lòng nhập tên ngành", isError: true);
+      }
       return;
     }
 
@@ -144,15 +143,17 @@ class _MajorListScreenState extends State<MajorListScreen> {
       await fetchMajors(majorName: _searchController.text);
       if (mounted) showSnackBar(context, "Thêm ngành học thành công");
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         showSnackBar(context, "Lỗi khi thêm ngành: $e", isError: true);
+      }
     }
   }
 
   Future<void> updateMajor(String id) async {
     if (_majorNameController.text.isEmpty) {
-      if (mounted)
+      if (mounted) {
         showSnackBar(context, "Vui lòng nhập tên ngành", isError: true);
+      }
       return;
     }
 
