@@ -28,7 +28,7 @@ class DashboardService {
       var response = await _dio.get("/total-users");
 
       if (response.statusCode == 200) {
-        var data = response.data;
+        var data = response.data['totalUsers'];
         return data.toString();
       } else {
         return "Lỗi: ${response.statusCode}";
@@ -43,7 +43,7 @@ class DashboardService {
       var response = await _dio.get("/total-universitys");
 
       if (response.statusCode == 200) {
-        var data = response.data;
+        var data = response.data['totalUniversities'];
         return data.toString();
       } else {
         return "Lỗi: ${response.statusCode}";
