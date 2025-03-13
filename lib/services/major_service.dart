@@ -1,4 +1,3 @@
-import 'package:collegeadmissionhelper/models/major_request.dart';
 import 'package:dio/dio.dart';
 import 'package:collegeadmissionhelper/models/major.dart';
 import '../models/paginated_response.dart';
@@ -78,7 +77,7 @@ class MajorService {
     }
   }
 
-  Future<void> createMajor(MajorRequest request) async {
+  Future<void> createMajor(Major request) async {
     try {
       final response = await _dio.post(
         "",
@@ -98,7 +97,7 @@ class MajorService {
     }
   }
 
-  Future<void> updateMajor(String id, MajorRequest updateRequest) async {
+  Future<void> updateMajor(String id, Major updateRequest) async {
     try {
       final data = updateRequest.toUpdateJson();
       if (data.isEmpty) {
@@ -115,10 +114,10 @@ class MajorService {
           },
         ),
       );
-
-      print("Cập nhật thành công: ${response.data}");
+      if(response.statusCode == 200) return;
+        throw Exception('Lỗi update');
     } catch (e) {
-      print("Lỗi khi cập nhật ngành học: $e");
+      throw Exception("Lỗi khi cập nhật ngành học: $e");
     }
   }
 
@@ -129,7 +128,7 @@ class MajorService {
         queryParameters: {"id ": MajorId},
       );
       if (response.statusCode == 200) {
-        print("Ngành học đã được cập nhật: ${response.data}");
+        return;
       } else {
         throw Exception('Failed to load');
       }

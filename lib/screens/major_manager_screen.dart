@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:collegeadmissionhelper/models/major.dart';
 import 'package:collegeadmissionhelper/services/major_service.dart';
 
-import '../models/major_request.dart';
 import '../widgets/dialog_utils.dart';
 import '../widgets/snackbar_utils.dart';
 import '../widgets/widget_utils.dart';
@@ -47,7 +46,7 @@ class _MajorListScreenState extends State<MajorListScreen> {
     setState(() => isLoading = true);
     try {
       final response = await _majorService.getAllMajors(majorName);
-      List<Major> listMajors = response ?? [];
+      List<Major> listMajors = response;
 
       if (sortBy == "name") {
         listMajors.sort(
@@ -134,10 +133,10 @@ class _MajorListScreenState extends State<MajorListScreen> {
     }
 
     try {
-      final newMajor = MajorRequest(
+      final newMajor = Major(
         name: _majorNameController.text,
         relatedSkills: _relatedSkillsController.text,
-        description: _descriptionController.text,
+        description: _descriptionController.text, id: '',
       );
       await _majorService.createMajor(newMajor);
       await fetchMajors(majorName: _searchController.text);
@@ -158,10 +157,10 @@ class _MajorListScreenState extends State<MajorListScreen> {
     }
 
     try {
-      final updatedMajor = MajorRequest(
+      final updatedMajor = Major(
         name: _majorNameController.text,
         relatedSkills: _relatedSkillsController.text,
-        description: _descriptionController.text,
+        description: _descriptionController.text, id: '',
       );
       await _majorService.updateMajor(id, updatedMajor);
       await fetchMajors(majorName: _searchController.text);

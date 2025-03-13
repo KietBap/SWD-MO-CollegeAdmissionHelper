@@ -19,6 +19,13 @@ class Major {
       description: json['description'] as String?,
     );
   }
+
+  Map<String, dynamic> toUpdateJson() {
+    final Map<String, dynamic> data = {};
+    data["name"] = name.isNotEmpty ? name : "";
+    data["description"] = description?.isNotEmpty == true ? description : "";
+    data["relatedSkills"] =
+        relatedSkills?.isNotEmpty == true ? relatedSkills : "";
+    return data;
+  }
 }
-
-

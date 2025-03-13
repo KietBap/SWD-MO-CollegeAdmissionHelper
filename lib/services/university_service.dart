@@ -60,9 +60,9 @@ class UniversityService {
       final response = await _dio.get("/$universityId");
       if (response.statusCode == 200) {
         final data = response.data['message'];
-        print('sdsdsdsd ${data}');
-        if (data == null)
+        if (data == null) {
           throw Exception("Không tìm thấy dữ liệu trường đại học");
+        }
         return University.fromJson(data);
       } else {
         throw Exception('Failed to load university');
@@ -72,6 +72,4 @@ class UniversityService {
       throw Exception('Error fetching university: $e');
     }
   }
-
-  Dio get dio => _dio;
 }
