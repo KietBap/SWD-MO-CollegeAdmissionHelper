@@ -35,17 +35,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           "Dashboard",
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        elevation: 0, // Bỏ bóng
+        elevation: 5, 
       ),
-      body: Container(// Đổi nền trắng
+      body: Container(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              _buildStatCard(context, "Tổng số người dùng", totalUsers,
+              _buildStatCard(context, "Total Users", totalUsers,
                   Icons.people, "/chart1"),
               SizedBox(height: 10),
-              _buildStatCard(context, "Tổng số trường đại học",
+              _buildStatCard(context, "Total University",
                   totalUniversities, Icons.school, "/chart2"),
             ],
           ),
@@ -58,7 +58,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       IconData icon, String route) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, route); // Chuyển đến màn hình tương ứng
+        Navigator.pushNamed(context, route);
       },
       child: Card(
         elevation: 4,

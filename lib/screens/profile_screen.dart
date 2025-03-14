@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi đăng xuất: $e")),
+        SnackBar(content: Text("Logout error: $e")),
       );
     }
   }
@@ -67,16 +67,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         userImage: widget.user.userImage,   
       );
       
-      await _userService.updateUser(widget.user.id!, updatedUser);
+      await _userService.updateUser(widget.user.id, updatedUser);
       setState(() {
         _isEditing = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Cập nhật hồ sơ thành công")),
+        SnackBar(content: Text("Profile update successful")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi cập nhật hồ sơ: $e")),
+        SnackBar(content: Text("Profile update error: $e")),
       );
     }
   }
@@ -85,16 +85,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     bool? confirm = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Xác nhận xóa tài khoản"),
-        content: Text("Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác."),
+        title: Text("Confirm account deletion"),
+        content: Text("Are you sure you want to delete your account? This action cannot be undone."),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text("Hủy"),
+            child: Text("Cancel"),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text("Xóa", style: TextStyle(color: Colors.red)),
+            child: Text("Delete", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -105,11 +105,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await _userService.deleteUser(widget.user.id!);
         await _logout(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Đã xóa tài khoản thành công")),
+          SnackBar(content: Text("Account deleted successfully")),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Lỗi xóa tài khoản: $e")),
+          SnackBar(content: Text("Error deleting account: $e")),
         );
       }
     }
@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hồ sơ cá nhân"),
+        title: Text("Profile"),
         actions: [
           if (!_isEditing)
             IconButton(
@@ -148,17 +148,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _isEditing
                 ? TextField(
                     controller: _userNameController,
-                    decoration: InputDecoration(labelText: "Tên người dùng"),
+                    decoration: InputDecoration(labelText: "User name"),
                   )
-                : Text("Tên người dùng: ${widget.user.userName}", 
+                : Text("User name: ${widget.user.userName}", 
                     style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
             _isEditing
                 ? TextField(
                     controller: _nameController,
-                    decoration: InputDecoration(labelText: "Tên"),
+                    decoration: InputDecoration(labelText: "Name"),
                   )
-                : Text("Tên: ${widget.user.name ?? 'Chưa có'}", 
+                : Text("Name: ${widget.user.name}", 
                     style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
             _isEditing
@@ -172,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 10),
             _isEditing
                 ? const SizedBox.shrink()
-                : Text("Số điện thoại: ${widget.user.phoneNumber ?? 'Chưa có'}", 
+                : Text("Phone: ${widget.user.phoneNumber ?? 'None'}", 
                     style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
             _isEditing
@@ -185,13 +185,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: _updateProfile,
-                    child: Text("Lưu"),
+                    child: Text("Save"),
                   ),
                   SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () => setState(() => _isEditing = false),
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                    child: Text("Hủy"),
+                    child: Text("Cancel"),
                   ),
                 ],
               ),
@@ -203,13 +203,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: Colors.red,
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
               ),
-              child: Text("Đăng xuất",
+              child: Text("Logout",
                   style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             SizedBox(height: 10),
             TextButton(
               onPressed: _deleteAccount,
-              child: Text("Xóa tài khoản", style: TextStyle(color: Colors.red)),
+              child: Text("Delete account", style: TextStyle(color: Colors.red)),
             ),
           ],
         ),

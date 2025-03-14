@@ -37,7 +37,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Chi tiết Trường Đại Học")),
+      appBar: AppBar(title: const Text("University Information")),
       body: FutureBuilder<University?>(
         future: _universityFuture,
         builder: (context, snapshot) {
@@ -47,12 +47,12 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
             print("Error: ${snapshot.error}");
             return Center(
               child: Text(
-                "Lỗi: ${snapshot.error.toString()}",
+                "Errors: ${snapshot.error.toString()}",
                 style: const TextStyle(color: Colors.red),
               ),
             );
           } else if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("Không tìm thấy dữ liệu"));
+            return const Center(child: Text("No data found"));
           }
 
           final University uni = snapshot.data!;
@@ -71,13 +71,13 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 200,
                           color: Colors.grey[300],
-                          child: const Center(child: Text("Lỗi tải hình ảnh")),
+                          child: const Center(child: Text("Image loading error")),
                         ),
                       )
                     : Container(
                         height: 200,
                         color: Colors.grey[300],
-                        child: const Center(child: Text("Không có hình ảnh")),
+                        child: const Center(child: Text("No images")),
                       ),
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -93,22 +93,22 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _buildInfoRow("Mã trường", uni.universityCode),
-                      _buildInfoRow("Địa điểm", uni.location),
+                      _buildInfoRow("University code", uni.universityCode),
+                      _buildInfoRow("Location", uni.location),
                       _buildInfoRow("Email", uni.email),
-                      _buildInfoRow("Số điện thoại", uni.phoneNumber),
-                      _buildInfoRow("Loại", uni.type),
-                      _buildInfoRow("Xếp hạng quốc gia", uni.rankingNational.toString()),
-                      _buildInfoRow("Xếp hạng quốc tế", uni.rankingInternational.toString()),
+                      _buildInfoRow("Phone", uni.phoneNumber),
+                      _buildInfoRow("Type", uni.type),
+                      _buildInfoRow("National ranking", uni.rankingNational.toString()),
+                      _buildInfoRow("International ranking", uni.rankingInternational.toString()),
                       const SizedBox(height: 20),
                       const Divider(thickness: 2),
                       const SizedBox(height: 10),
                       const Text(
-                        "Chuyên ngành",
+                        "Majors",
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       majors.isEmpty
-                          ? const Center(child: Text("Không có chuyên ngành nào."))
+                          ? const Center(child: Text("No majors."))
                           : SizedBox(
                               height: 300,
                               child: ListView.builder(
@@ -140,7 +140,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8),
                                               child: Text(
-                                                "Học phí: ${major.tuitionFee}",
+                                                "Tuition: ${major.tuitionFee}",
                                                 style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                                               ),
                                             ),
@@ -148,7 +148,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8),
                                               child: Text(
-                                                "Mã ngành: ${major.majorCode}",
+                                                "Major Code: ${major.majorCode}",
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,

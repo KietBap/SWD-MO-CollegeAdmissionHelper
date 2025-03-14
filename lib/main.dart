@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_1.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_2.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_3.dart';
+import 'package:collegeadmissionhelper/screens/profile_screen.dart';
 import 'package:collegeadmissionhelper/screens/university_list_screen.dart';
 import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         '/chart3': (context) => ChartScreen3(),
         '/universities': (context) => UniversityListScreen(),
         '/chatboxAI': (context) => ChatBoxAiScreen(userId: userId),
-        '/major': (context) => MajorListScreen(),
+        '/major': (context) => MajorListScreen()
       },
     );
   }

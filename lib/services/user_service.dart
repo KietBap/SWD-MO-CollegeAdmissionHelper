@@ -75,7 +75,7 @@ class UserService {
     try {
       final response = await _dio.delete(
         '/$userId',
-        queryParameters: {"id ": userId},
+        queryParameters: {"id": userId},
       );
       if (response.statusCode == 200) {
         return;
