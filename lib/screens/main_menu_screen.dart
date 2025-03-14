@@ -7,12 +7,11 @@ import 'profile_screen.dart';
 class MainMenuScreen extends StatelessWidget {
   final TokenService _tokenService = TokenService();
   final UserService _userService = UserService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Menu người dùng"),
+        title: Text("User menu"),
         actions: [
           IconButton(
             icon: Icon(Icons.account_circle, size: 32),
@@ -28,15 +27,15 @@ class MainMenuScreen extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text("Có lỗi xảy ra!"));
+              return Center(child: Text("An error occurred!"));
             } else if (!snapshot.hasData || snapshot.data == null) {
-              return Center(child: Text("Không tìm thấy tên người dùng!"));
+              return Center(child: Text("Username not found!"));
             } else {
               String userName = snapshot.data!;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Xin chào, $userName", style: TextStyle(fontSize: 20)),
+                  Text("Hi, $userName", style: TextStyle(fontSize: 20)),
                   SizedBox(height: 20),
                   FutureBuilder<String?>(
                     future: _tokenService.getUserRole(),
@@ -47,7 +46,7 @@ class MainMenuScreen extends StatelessWidget {
                       } else if (roleSnapshot.hasError ||
                           !roleSnapshot.hasData) {
                         return Center(
-                            child: Text("Không thể xác định vai trò!"));
+                            child: Text("Unable to determine role!"));
                       }
 
                       String? role = roleSnapshot.data;
@@ -57,15 +56,15 @@ class MainMenuScreen extends StatelessWidget {
                         shrinkWrap: true,
                         crossAxisCount: 2,
                         children: [
-                          _buildCard("Quản lý người dùng", Icons.people,
+                          _buildCard("User Management", Icons.people,
                               context, '/users', isAdmin),
                           _buildCard("Dashboard", Icons.bar_chart, context,
                               '/dashBoard', isAdmin),
-                          _buildCard("Danh sách trường Đại học", Icons.school,
+                          _buildCard("University Management", Icons.school,
                               context, '/universities', true),
-                          _buildCard("Chat với AI", Icons.smart_toy, context,
+                          _buildCard("Chat With AI", Icons.smart_toy, context,
                               '/chatboxAI', true),
-                          _buildCard("Danh sách chuyên ngành", Icons.book, context,
+                          _buildCard("Major Management", Icons.book, context,
                               '/major', true),
                         ],
                       );
@@ -108,8 +107,8 @@ class MainMenuScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Thông báo"),
-        content: Text("Bạn không có quyền truy cập vào mục này."),
+        title: Text("Notification"),
+        content: Text("You do not have access !"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -134,12 +133,12 @@ class MainMenuScreen extends StatelessWidget {
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi tải thông tin người dùng')),
+          SnackBar(content: Text('Error loading user information')),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không tìm thấy UserId')),
+        SnackBar(content: Text('UserId not found')),
       );
     }
   }

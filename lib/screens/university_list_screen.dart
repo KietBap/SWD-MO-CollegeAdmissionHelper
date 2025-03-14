@@ -1,3 +1,4 @@
+import 'package:collegeadmissionhelper/widgets/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:collegeadmissionhelper/models/university.dart';
 import 'package:collegeadmissionhelper/services/university_service.dart';
@@ -53,7 +54,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi khi tải dữ liệu: $e")),
+        SnackBar(content: Text("Error loading data: $e")),
       );
     }
   }
@@ -83,10 +84,10 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Danh sách các trường đại học"),
+        title: Text("University Management"),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort), // Nút chọn tiêu chí sắp xếp
+            icon: Icon(Icons.sort), 
             onSelected: (String value) {
               setState(() {
                 sortBy = value;
@@ -105,7 +106,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           : null,
                     ),
                     SizedBox(width: 8),
-                    Text("Sắp xếp theo tên trường"),
+                    Text("Sort by name"),
                   ],
                 ),
               ),
@@ -120,7 +121,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           : null,
                     ),
                     SizedBox(width: 8),
-                    Text("Sắp xếp theo mã trường"),
+                    Text("Sort by code"),
                   ],
                 ),
               ),
@@ -151,7 +152,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                   TextField(
                     controller: _uniCodeController,
                     decoration: InputDecoration(
-                      labelText: "Mã trường",
+                      labelText: "University Code",
                       prefixIcon: Icon(Icons.code),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8)),
@@ -172,7 +173,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                       });
                     },
                     decoration: InputDecoration(
-                      labelText: _selectedType == null ? "Loại hình" : "",
+                      labelText: _selectedType == null ? "Type" : "",
                       prefixIcon: Icon(Icons.category),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8)),
@@ -182,7 +183,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                   TextField(
                     controller: _locationController,
                     decoration: InputDecoration(
-                      labelText: "Địa điểm",
+                      labelText: "Location",
                       prefixIcon: Icon(Icons.location_on),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8)),
@@ -196,7 +197,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                         child: ElevatedButton.icon(
                           onPressed: applyFilter,
                           icon: Icon(Icons.search),
-                          label: Text("Lọc"),
+                          label: Text("Filter"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             foregroundColor: Colors.white,
@@ -210,7 +211,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                         child: ElevatedButton.icon(
                           onPressed: clearFilters,
                           icon: Icon(Icons.clear),
-                          label: Text("Xóa lọc"),
+                          label: Text("Clear"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                             foregroundColor: Colors.white,
@@ -229,66 +230,22 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
             child: isLoading
                 ? Center(child: CircularProgressIndicator())
                 : universities.isEmpty
-                    ? Center(child: Text("Không có trường nào"))
+                    ? Center(child: Text("No fields available"))
                     : ListView.builder(
                         itemCount: universities.length,
                         itemBuilder: (context, index) {
                           var uni = universities[index];
-                          return Card(
-                            elevation: 3,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: ListTile(
-                              leading: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
+                          return buildUniversityCard(
+                            university: uni,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UniversityDetailScreen(
+                                      universityId: uni.id),
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    uni.image,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(Icons.school,
-                                          color: Colors.blueAccent, size: 40);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              title: Text(
-                                "${uni.name}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          "Mã trường: ${uni.universityCode}\n",
-                                    ),
-                                    TextSpan(
-                                      text: "Địa điểm: ${uni.location}",
-                                    ),
-                                  ],
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        UniversityDetailScreen(
-                                            universityId: uni.id),
-                                  ),
-                                );
-                              },
-                            ),
+                              );
+                            },
                           );
                         },
                       ),

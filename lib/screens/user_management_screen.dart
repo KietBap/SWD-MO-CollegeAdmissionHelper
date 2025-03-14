@@ -48,7 +48,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi khi tải dữ liệu: $e")),
+        SnackBar(content: Text("Error loading data: $e")),
       );
     }
   }
@@ -71,10 +71,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Quản lý người dùng"),
+        title: Text("User Management"),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort), // Nút chọn tiêu chí sắp xếp
+            icon: Icon(Icons.sort),
             onSelected: (String value) {
               setState(() {
                 sortBy = value;
@@ -93,7 +93,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           : null,
                     ),
                     SizedBox(width: 8),
-                    Text("Sắp xếp theo Tên"),
+                    Text("Sort by Name"),
                   ],
                 ),
               ),
@@ -108,7 +108,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           : null,
                     ),
                     SizedBox(width: 8),
-                    Text("Sắp xếp theo Tên"),
+                    Text("Sort by Email"),
                   ],
                 ),
               ),
@@ -149,7 +149,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   TextField(
                     controller: _phoneController,
                     decoration: InputDecoration(
-                      labelText: "Số điện thoại",
+                      labelText: "Phone",
                       prefixIcon: Icon(Icons.phone),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8)),
@@ -164,7 +164,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         child: ElevatedButton.icon(
                           onPressed: applyFilter,
                           icon: Icon(Icons.search),
-                          label: Text("Lọc"),
+                          label: Text("Filter"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             foregroundColor: Colors.white,
@@ -178,7 +178,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         child: ElevatedButton.icon(
                           onPressed: clearFilters,
                           icon: Icon(Icons.clear),
-                          label: Text("Xóa lọc"),
+                          label: Text("Clear"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                             foregroundColor: Colors.white,
@@ -197,7 +197,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             child: isLoading
                 ? Center(child: CircularProgressIndicator())
                 : users.isEmpty
-                    ? Center(child: Text("Không có người dùng nào"))
+                    ? Center(child: Text("No users"))
                     : ListView.builder(
                         itemCount: users.length,
                         itemBuilder: (context, index) {

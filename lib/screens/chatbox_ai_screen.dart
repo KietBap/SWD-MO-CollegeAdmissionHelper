@@ -50,7 +50,7 @@ class _ChatBoxAiScreenState extends State<ChatBoxAiScreen> {
               if (message is Map<dynamic, dynamic>) {
                 tempMessages.add({
                   "Sender": message["Sender"] ?? "unknown",
-                  "Text": (message["Text"] ?? "Tin nhắn không xác định")
+                  "Text": (message["Text"] ?? "Unknown message")
                       .replaceAll("\\n", "\n")
                       .replaceAll("*", " ")
                       .trim(),
@@ -169,7 +169,7 @@ class _ChatBoxAiScreenState extends State<ChatBoxAiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chat với AI")),
+      appBar: AppBar(title: Text("Chat With AI")),
       body: Column(
         children: [
           Expanded(
@@ -204,8 +204,8 @@ class _ChatBoxAiScreenState extends State<ChatBoxAiScreen> {
                     onEditingComplete: sendMessage,
                     decoration: InputDecoration(
                       hintText: isWaitingForResponse
-                          ? "Đang chờ AI trả lời..."
-                          : "Nhập tin nhắn...",
+                          ? "Waiting for AI to reply..."
+                          : "Enter message...",
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       border: OutlineInputBorder(

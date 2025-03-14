@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       setState(() {
-        errorMessage = "Vui lòng nhập email và mật khẩu!";
+        errorMessage = "Please enter email and password!";
       });
       return;
     }
@@ -44,8 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text("Thông báo"),
-                content: Text("Bạn không có quyền truy cập!"),
+                title: Text("Notification"),
+                content: Text("You do not have access!"),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
@@ -59,12 +59,12 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       } else {
         setState(() {
-          errorMessage = "Đăng nhập thất bại! Kiểm tra lại thông tin.";
+          errorMessage = "Login failed! Check information again.";
           isLoading = false;
         });
       }
     } catch (e) {
-      setState(() => errorMessage = "Có lỗi xảy ra, vui lòng thử lại!");
+      setState(() => errorMessage = "An error occurred, please try again!");
     } finally {
       setState(() => isLoading = false);
     }
@@ -87,8 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text("Thông báo"),
-                content: Text("Bạn không có quyền truy cập!"),
+                title: Text("Notification"),
+                content: Text("You do not have access!"),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
@@ -102,12 +102,12 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       } else {
         setState(() {
-          errorMessage = "Đăng nhập thất bại!";
+          errorMessage = "Login failed!";
           isLoading = false;
         });
       }
     } catch (e) {
-      setState(() => errorMessage = "Lỗi khi đăng nhập Google!");
+      setState(() => errorMessage = "Error while signing in to Google!");
     } finally {
       setState(() => isLoading = false);
     }
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextField(
                     controller: passwordController,
-                    decoration: InputDecoration(labelText: 'Mật khẩu'),
+                    decoration: InputDecoration(labelText: 'Password'),
                     obscureText: true,
                   ),
                   SizedBox(height: 10),
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: login,
-                        child: Text('Đăng nhập'),
+                        child: Text('Login'),
                       ),
                       SizedBox(height: 40),
                       Text("Login with",
