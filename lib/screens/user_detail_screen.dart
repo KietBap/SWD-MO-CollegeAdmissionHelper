@@ -26,7 +26,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Account banned successfully')),
             );
-            Navigator.pop(context); // Return to previous screen
+            Navigator.pop(context);
           }
         } catch (e) {
           if (mounted) {
@@ -67,16 +67,14 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold)),
             Text(widget.user.name, style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
-            const Text("Email:",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Email:", style: TextStyle(fontWeight: FontWeight.bold)),
             Text(widget.user.email, style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             const Text("Name Account:",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             Text(widget.user.userName, style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
-            const Text("Phone:",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Phone:", style: TextStyle(fontWeight: FontWeight.bold)),
             Text(widget.user.phoneNumber ?? "None",
                 style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 20),

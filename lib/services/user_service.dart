@@ -11,8 +11,8 @@ class UserService {
     },
     baseUrl:
         "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/user",
-    connectTimeout: Duration(seconds: 5),
-    receiveTimeout: Duration(seconds: 5),
+    connectTimeout: Duration(seconds: 10),
+    receiveTimeout: Duration(seconds: 10),
   ));
 
   UserService() {
@@ -75,39 +75,14 @@ class UserService {
     try {
       final response = await _dio.delete(
         '/$userId',
-        queryParameters: {"id": userId},
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         return;
       } else {
         throw Exception('Failed to load');
       }
     } catch (e) {
       throw Exception('Lỗi API: $e');
-    }
-  }
-
-  Future<void> updateUser(String userId, User user) async {
-    try {
-      final data = user.toJson();
-      if (data.isEmpty) {
-        print("Không có dữ liệu cần cập nhật!");
-        return;
-      }
-      print("Dữ liệu gửi lên: $data");
-      final response = await _dio.patch(
-        '/$userId',
-        data: data,
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-          },
-        ),
-      );
-      if (response.statusCode == 200) return;
-      throw Exception('Lỗi update');
-    } catch (e) {
-      throw Exception("Lỗi khi cập nhật tài khoản: $e");
     }
   }
 }

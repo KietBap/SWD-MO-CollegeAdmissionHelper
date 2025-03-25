@@ -1,5 +1,8 @@
 import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
+
+import '../models/login_stats_response.dart';
 
 class DashboardService {
   TokenService _tokenService = TokenService();
@@ -50,6 +53,44 @@ class DashboardService {
       }
     } catch (e) {
       return "Lỗi kết nối: $e";
+    }
+  }
+
+  Future<LoginStatsResponse> getUserLoginStats(
+      String startDate, String endDate) async {
+    try {
+      final inputFormat = DateFormat("dd/MM/yyyy hh:mm a");
+      final outputFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+      final parsedStartDate = inputFormat.parse(startDate);
+      final parsedEndDate = inputFormat.parse(endDate);
+
+      final formattedStartDate = outputFormat.format(parsedStartDate);
+      final formattedEndDate = outputFormat.format(parsedEndDate);
+
+      var response = await _dio.get(
+        "/user-login-stats",
+        queryParameters: {
+          'startDate': formattedStartDate,
+          'endDate': formattedEndDate,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return LoginStatsResponse.fromJson(response.data);
+      } else {
+        print("API Error: ${response.statusCode} - ${response.statusMessage}");
+        return LoginStatsResponse(
+          message: "Error: ${response.statusCode}",
+          data: LoginStatsData(values: []),
+        );
+      }
+    } catch (e) {
+      print("Connection Error: $e");
+      return LoginStatsResponse(
+        message: "Lỗi kết nối: $e",
+        data: LoginStatsData(values: []),
+      );
     }
   }
 }

@@ -84,8 +84,8 @@ class _ChatBoxAiScreenState extends State<ChatBoxAiScreen> {
       String timestamp = DateTime.now().toUtc().toIso8601String();
       setState(() {
         _messages.insert(0, {
-          "Text": text,
           "Sender": "user",
+          "Text": text,
           "Timestamp": timestamp,
         });
         isWaitingForResponse = true;
@@ -95,7 +95,7 @@ class _ChatBoxAiScreenState extends State<ChatBoxAiScreen> {
       _messageController.clear();
       _scrollToBottom();
 
-      await _chatService.sendMessage(text);
+      await _chatService.sendMessage(text, widget.userId!);
 
       setState(() {
         isWaitingForResponse = false;

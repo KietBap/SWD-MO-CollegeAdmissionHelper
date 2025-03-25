@@ -9,6 +9,8 @@ class MajorService {
     BaseOptions(
       baseUrl:
           "https://swpproject-egd0b4euezg4akg7.southeastasia-01.azurewebsites.net/api/major",
+      connectTimeout: Duration(seconds: 10),
+      receiveTimeout: Duration(seconds: 10),
       headers: {
         'Accept': 'application/json',
       },
