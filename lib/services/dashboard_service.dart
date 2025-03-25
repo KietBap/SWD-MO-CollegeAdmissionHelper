@@ -1,3 +1,4 @@
+import 'package:collegeadmissionhelper/models/uni_major.dart';
 import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -91,6 +92,34 @@ class DashboardService {
         message: "Lỗi kết nối: $e",
         data: LoginStatsData(values: []),
       );
+    }
+  }
+
+  Future<List<UniMajor>> getTopReviewedUniMajors({
+    required int year,
+    required String period,
+    required int value,
+  }) async {
+    try {
+      var response = await _dio.get(
+        "/top-reviewed-unimajors",
+        queryParameters: {
+          'year': year,
+          'period': period,
+          'value': value,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> dataList = response.data['data']['\$values'];
+        return dataList.map((json) => UniMajor.fromJson(json)).toList();
+      } else {
+        print("API Error: ${response.statusCode} - ${response.statusMessage}");
+        return [];
+      }
+    } catch (e) {
+      print("Connection Error: $e");
+      return [];
     }
   }
 }

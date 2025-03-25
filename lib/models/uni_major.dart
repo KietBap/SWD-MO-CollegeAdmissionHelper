@@ -15,11 +15,11 @@ class UniMajor {
 
   factory UniMajor.fromJson(Map<String, dynamic> json) {
     return UniMajor(
-      id: json['Id']?.toString() ?? '',
-      tuitionFee: json['TuitionFee'] ?? '',
-      majorCode: json['MajorCode'] ?? '',
-      universityName: json['UniversityName'] ?? '',
-      majorName: json['MajorName'] ?? '',
+      id: json['id']?.toString() ?? json['Id']?.toString() ??'',
+      tuitionFee: json['tuitionFee'] ?? json['TuitionFee']?.toString() ??'',
+      majorCode: json['majorCode'] ?? json['MajorCode']?.toString() ?? '',
+      universityName: json['universityName'] ?? json['UniversityName']?.toString() ?? '',
+      majorName: json['majorName'] ?? json['MajorName']?.toString() ?? '',
     );
   }
 }

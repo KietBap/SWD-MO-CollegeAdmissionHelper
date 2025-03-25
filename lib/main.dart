@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_1.dart';
 import 'package:collegeadmissionhelper/screens/chart/chart_screen_2.dart';
-import 'package:collegeadmissionhelper/screens/chart/chart_screen_3.dart';
 import 'package:collegeadmissionhelper/screens/university_list_screen.dart';
 import 'package:collegeadmissionhelper/services/token_service.dart';
 import 'package:flutter/material.dart';
@@ -51,29 +50,42 @@ class _MyAppState extends State<MyApp> {
   Future<void> _loadUserId() async {
     try {
       userId = await _tokenService.getUserId();
+      setState(() {});
     } catch (e) {
       print('Error loading userId: $e');
       userId = null;
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'College Admission Helper',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => LoginScreen(),
-        '/mainMenu': (context) => MainMenuScreen(),
-        '/users': (context) => UserManagementScreen(),
-        '/dashBoard': (context) => DashBoardScreen(),
-        '/chart1': (context) => ChartScreen1(),
-        '/chart2': (context) => ChartScreen2(),
-        '/chart3': (context) => ChartScreen3(),
-        '/universities': (context) => UniversityListScreen(),
-        '/chatboxAI': (context) => ChatBoxAiScreen(userId: userId),
-        '/major': (context) => MajorListScreen()
+    return FutureBuilder(
+      future: _tokenService.getUserId(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); 
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        userId = snapshot.data; 
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'College Admission Helper',
+          initialRoute: '/',
+          routes: {
+            '/': (context) => LoginScreen(),
+            '/mainMenu': (context) => MainMenuScreen(),
+            '/users': (context) => UserManagementScreen(),
+            '/dashBoard': (context) => DashBoardScreen(),
+            '/chart1': (context) => ChartScreen1(),
+            '/chart2': (context) => ChartScreen2(),
+            '/universities': (context) => UniversityListScreen(),
+            '/chatboxAI': (context) => ChatBoxAiScreen(userId: userId),
+            '/major': (context) => MajorListScreen()
+          },
+        );
       },
     );
   }

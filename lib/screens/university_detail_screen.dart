@@ -31,37 +31,42 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
   }
 
   void _refreshFuture(String universityId) {
-    _universityFuture = _universityService.getUniversityById(universityId);
+    setState(() {
+      _universityFuture = _universityService.getUniversityById(universityId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("University Information")),
+      appBar: AppBar(
+        title: const Text("University Information"),
+      ),
       body: FutureBuilder<University?>(
         future: _universityFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            print("Error: ${snapshot.error}");
+            print("Error in FutureBuilder: ${snapshot.error}");
             return Center(
               child: Text(
-                "Errors: ${snapshot.error.toString()}",
+                "Error: ${snapshot.error.toString()}",
                 style: const TextStyle(color: Colors.red),
               ),
             );
           } else if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("No data found"));
+            return const Center(child: Text("No university data found"));
           }
 
           final University uni = snapshot.data!;
           final List<UniMajor> majors = uni.majors;
-          
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // University Image
                 (uni.image.isNotEmpty && Uri.tryParse(uni.image)?.hasAuthority == true)
                     ? Image.network(
                         uni.image,
@@ -77,8 +82,9 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                     : Container(
                         height: 200,
                         color: Colors.grey[300],
-                        child: const Center(child: Text("No images")),
+                        child: const Center(child: Text("No image available")),
                       ),
+                // University Info
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -89,7 +95,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
+                          color: Colors.blue,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -103,12 +109,19 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                       const SizedBox(height: 20),
                       const Divider(thickness: 2),
                       const SizedBox(height: 10),
+                      // Majors Section
                       const Text(
                         "Majors",
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue),
                       ),
+                      const SizedBox(height: 10),
                       majors.isEmpty
-                          ? const Center(child: Text("No majors."))
+                          ? const Center(
+                              child: Text(
+                                "No majors available for this university",
+                                style: TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
+                            )
                           : SizedBox(
                               height: 300,
                               child: ListView.builder(
@@ -126,12 +139,15 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
                                         children: [
                                           Row(
                                             children: [
-                                              const Icon(Icons.school, color: Colors.blueAccent, size: 30),
+                                              const Icon(Icons.school, color: Colors.blue, size: 30),
                                               const SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   major.majorName,
-                                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -177,7 +193,21 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen> {
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Text("$label: $value", style: const TextStyle(fontSize: 16)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$label: ",
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: Text(
+              value.isEmpty ? "N/A" : value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
