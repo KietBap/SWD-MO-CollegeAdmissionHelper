@@ -228,14 +228,26 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                               subtitle: Text(user.email),
                               trailing: Icon(Icons.arrow_forward_ios,
                                   color: Colors.grey),
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         UserDetailScreen(user: user),
                                   ),
                                 );
+                                // Nếu result là true (tức là user đã bị xóa), làm mới danh sách
+                                if (result == true) {
+                                  fetchUsers(
+                                    email: _emailController.text.isNotEmpty
+                                        ? _emailController.text
+                                        : null,
+                                    phoneNumber:
+                                        _phoneController.text.isNotEmpty
+                                            ? _phoneController.text
+                                            : null,
+                                  );
+                                }
                               },
                             ),
                           );

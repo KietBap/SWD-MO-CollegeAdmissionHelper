@@ -81,8 +81,8 @@ class GoogleAuthService {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await Future.wait([
           prefs.setString('accessToken', accessToken),
-          prefs.setString('name', name!),
           prefs.setString('userId', userId!),
+          prefs.setString('name', name!),
         ]);
         return true;
       } else {

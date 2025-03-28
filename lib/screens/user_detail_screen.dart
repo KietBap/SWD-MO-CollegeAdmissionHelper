@@ -26,7 +26,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Account banned successfully')),
             );
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           }
         } catch (e) {
           if (mounted) {
